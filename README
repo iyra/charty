@@ -1,0 +1,39 @@
+This program allows you to create a 'chart' showing all the albums you
+like, so that you can share your music tastes in a compact and
+visually appealing way. It is designed as an open source alternative
+to sites like neverendingchartrendering (topsters 2) and the original
+topsters (which went down for a while).
+
+It can use LastFM and Discogs to fetch album covers and information,
+and it will store these locally and cache them in a local database.
+
+It has the ability to create topsters2-style charts (with 100 tiles)
+or other variations such as arbitrary AxB sized charts with any tile
+size you want. It can also list the album artists and names on the
+right hand side, separated so that you can see which list corresponds
+to which row. You can also change colours.
+
+There are two ways to save charts; either by "exporting" as JSON and
+saving to your hard drive, then re-importing, or by creating an
+account (using session cookies) and storing on the server. Both do
+pretty much the same thing.
+
+Bugs I have noticed are scant, though I haven't accounted for many
+edge cases, and the code largely assumes that the user knows what
+they're doing viz. don't mess it up. The font that I have included can
+only display Latin and Japanese characters, so if you have an album
+title containing Arabic or something, it probably won't show up, and
+only display as boxes. I have been unable to find a solution to this
+short of perhaps rendering each album title separately and guessing
+which font needs to be used.
+
+As usual, this is available under the CC0 license (public domain).
+
+The fonts included, mona.ttf and noto.ttc have their own licenses:
+
+'Noto' is a trademark of Google Inc. Noto fonts are open source. All
+Noto fonts are published under the SIL Open Font License, Version 1.1.
+http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+The 'mona.ttf' font is licensed into the public domain. The author's
+page is here: http://monafont.sourceforge.net/
