@@ -37,3 +37,7 @@ http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 
 The 'mona.ttf' font is licensed into the public domain. The author's
 page is here: http://monafont.sourceforge.net/
+
+I have used umbrella.js in this project, Created and maintained by 
+Francisco Presencia under the MIT license.
+https://github.com/franciscop/umbrella
