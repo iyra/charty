@@ -90,8 +90,8 @@ justify-content: center; /* align horizontal */
 
 	 
 	</style>
-	<script src="index_files/umbrella.js"></script>
-	<script src="index_files/charty.js"></script>
+	<script src="/static/umbrella.min.js"></script>
+	<script src="/static/charty.js"></script>
 	<script type="text/javascript">
 	  init_user();
 	</script>
@@ -121,7 +121,7 @@ justify-content: center; /* align horizontal */
 		<div id="user_chart_section_save_area" class="hidden">
 		  <a href="javascript:toggle_save_form()">Save</a>
 		  <div id="save_form" class="hidden">
-		    Title: <input id="chart_save_form_title" {%="" if="" wc="" %}value="{{ chartname }}" endif="" %}="" type="text"><br>
+		    Title: <input id="chart_save_form_title" value="{{ chartname }}" type="text"><br>
 		    Public?: <input id="chart_save_form_public" type="checkbox"><br>
 		    Overwrite?: <input id="chart_save_form_overwrite" checked="checked" type="checkbox"> <a href="javascript:save_chart()">Go</a>
 		  </div>

@@ -3,26 +3,43 @@ import uuid
 import json
 import hashlib
 import bcrypt
-IMGDIR="/var/www/charty/chart-images"
-THUMBDIR="/var/www/charty/chart-thumbs"
-DBFILE="/var/www/charty/chart-db"
-USERDBFILE="/var/www/charty/user-db"
-USERCHARTFILE="/var/www/charty/user-charts"
-CHARTDIR="/var/www/charty/charts"
-STATICDIR="/var/www/charty/static"
-UPLOAD_FOLDER = '/tmp'
-LASTFM_API = ""
-DISCOGS_TOKEN = ""
+import sys
+from pathlib import Path
+import os, errno
+IMGDIR="chart-images"
+THUMBDIR="chart-thumbs"
+DBFILE="chart-db"
+USERDBFILE="user-db"
+USERCHARTFILE="user-charts"
+CHARTDIR="charts"
+STATICDIR="static"
+LASTFM_API = "e72c35fb29c3884642fae2eac2871061"
+DISCOGS_TOKEN = "JPHgvkNAHsZnnyiOBUXQieTSgKfgErODSFxeompi"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 chart_settings = ['x','y','tile_width','margin_r', 'margin_b']
 styles = ['topsters2', 'top42', 'axb']
+
+for i in [CHARTDIR, STATICDIR, IMGDIR, THUMBDIR]:
+    try:
+        os.makedirs(i)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+for i in [DBFILE, USERDBFILE, USERCHARTFILE]:
+    try:
+        Path(i).touch()
+    except FileExistsError:
+        pass
+    except PermissionError:
+        raise
+    
           
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, send_from_directory
 import discogs_client as dc
 import re
 import urllib.request
 import requests
-import os
 from werkzeug.utils import secure_filename
 import urllib.parse
 import requests
@@ -231,12 +248,17 @@ def clean_image_j(image_j):
     return (True, opts)
 
 def search_lfm(term):
+    print(term)
     try:
-        r = requests.get("http://ws.audioscrobbler.com/2.0/?album=%s&limit=8&method=album.search&api_key="+LASTFM_API+"&format=json" % term)
+        r = requests.get("http://ws.audioscrobbler.com/2.0/?album="+term+"&limit=8&method=album.search&api_key="+LASTFM_API+"&format=json")
         res = []
+        print("http://ws.audioscrobbler.com/2.0/?album="+term+"&limit=8&method=album.search&api_key="+LASTFM_API+"&format=json")
+        print(r.json())
         als = r.json()['results']['albummatches']['album']
         for a in als:
+            print(a['image'][3]['#text'])
             if len(a['image'][3]['#text']) > 0:
+                print(a['artist'])
                 res.append({'id':"LFM"+hashlib.sha1(a['url'].encode('utf-8')).hexdigest()[0:6],
                             'artist':a['artist'],
                             'album': a['name'],
