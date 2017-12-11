@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <style type="text/css" src="/static/normalize.css"></style>
+	<style type="text/css">
+	 body {
+	     font-family:sans;
+	 padding:0;
+	 margin:0;
+	 background-color:#111;
+	 color:#eee;
+	 font-size:84%;
+	 }
+	 #error_bar {
+	 color: lime;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding: 3px;
+	 max-width: 60em;
+	 background-color:black;
+	 }
+	 a, a:visited {
+	 color: #6699f6;
+	 text-decoration:none;
+	 }
+	 ul {
+	     margin:0;
+	     padding:0;
+	 }
+	 li {
+	     border:1px solid red;
+	     margin-bottom:1em;
+	     padding:0.2em;
+	     border-radius:0.2em;
+	 }
+	 .hidden {
+	     display:none;
+	 }
+	 #side-bar {
+	     width: 25em;
+	     float: left;
+	     clear: left;
+	 /*border-right: 1px solid #ddd;*/
+	     overflow:hidden;  //code added to prevent scroll
+    position:fixed;
+	 
+	 }
+	 #main-copy {
+	     /*max-width: 90em;*/
+	     color: black;
+	     /*background-color: #000;*/
+	     text-align: justify;
+	     line-height: 1.5em;
+	     margin: 0em 0 0 25em;
+	     padding: 0.5mm 5mm 5mm 5mm;
+	 border-left: 1px solid #ddd;
+	 padding:1.5em;
+	 overflow:auto;
+	 }
+	 .tile {
+	 border:1px solid #6699f6;
+	 text-align:center;
+	     display: inline-flex;
+justify-content: center; /* align horizontal */
+	     align-items: center; /* align vertical */
+	     vertical-align:top;
+	 margin-bottom:0.2em;
+	 font-size:0;
+	 }
+	 
+	 .selected {
+	     border-color:pink;
+	 }
+
+
+	 .t175, .t144, .t83, .t57 { display:flex; margin-bottom:7px;}
+
+	 /* topsters2 */
+	 .t175 > div {
+	 margin-right:10px;}
+	 .t144 > div {
+	     margin-right:10px;
+	 }
+	 .t83 > div {
+	 margin-right:8.4px;
+	 }
+	 .t57 > div {
+	     margin-right:7.7px;
+	 }
+
+	 
+	</style>
+	<script src="index_files/umbrella.js"></script>
+	<script src="index_files/charty.js"></script>
+	<script type="text/javascript">
+	  init_user();
+	</script>
+    </head>
+    <body>
+	
+	<div id="side-bar">
+
+	    <div id="user_section">
+		<!-- login/register form (default=show, login=hide)
+		     logout button (default=hide, login=show)
+		   -->
+		<div id="user_section_login_area">
+		    <input id="login_form_username" type="text">
+		    <input id="login_form_password" type="password"> <a href="javascript:login()">Log in</a>
+		</div>
+		<div id="user_section_information_area" class="hidden">
+		    <div id="user_section_information_area_uname"></div> <a href="javascript:logout()">Log out</a>
+		</div>
+	    </div>
+
+	    <div id="user_chart_section">
+		<!-- save chart (default=hide, login=show)
+		     list of user charts (default=show)
+		   - current user chart (default=hide, login=show)
+		   -->
+		<div id="user_chart_section_save_area" class="hidden">
+		  <a href="javascript:toggle_save_form()">Save</a>
+		  <div id="save_form" class="hidden">
+		    Title: <input id="chart_save_form_title" {%="" if="" wc="" %}value="{{ chartname }}" endif="" %}="" type="text"><br>
+		    Public?: <input id="chart_save_form_public" type="checkbox"><br>
+		    Overwrite?: <input id="chart_save_form_overwrite" checked="checked" type="checkbox"> <a href="javascript:save_chart()">Go</a>
+		  </div>
+		</div>
+
+		<div id="user_chart_list_area">
+		  <a href="javascript:toggle_userchart_form()">Find user's charts</a>
+		  <div id="user_chart_list_form" class="hidden">
+		    <input id="chart_list_form_name" placeholder="username" type="text"> <a href="javascript:find_user_charts()">Go</a>
+		    <div id="user_charts">
+		    </div>
+		  </div>
+		</div>
+	    </div>
+
+	    <div id="chart_section">
+		<!-- new chart with template (default=show, new chart=hide, delete=show)
+		     import chart (default=show, new chart=hide, delete=show)
+		     export chart (default=hide, new chart=show, delete=hide)
+		     delete chart (default=hide, new chart=show, delete=hide)
+		  -->
+
+		<div id="chart_section_make_area">
+		  <a href="javascript:make_chart()">Make chart</a>
+		</div>
+		
+		<div id="chart_section_new_area">
+		  <a href="javascript:show_new_form()">New chart</a>
+		  <div id="new_form" class="hidden">
+		    AxB Rows: <input id="tiles_y" value="3" type="number"><br>
+		    AxB Cols: <input id="tiles_x" value="3" type="number"><br>
+		    AxB Tile size: <input id="tile_width" value="250" type="number"><br>
+		    Template:
+		    <select id="tplopt">
+		      <option value="topsters2" selected="selected">Topsters2 100</option>
+		      <option value="top42">Top 42</option>
+		      <option value="axb">AxB</option>
+		    </select> <a href="javascript:begin(0);">Go</a>
+		  </div>
+		</div>
+
+		<div id="chart_section_options_area">
+		  <a href="javascript:toggle_options_form()">Options</a>
+		  <div id="options_form" class="hidden">
+		    Horiz. spacing: <input id="margin_r" value="9" type="number"><br>
+		    Vert. spacing: <input id="margin_b" value="9" type="number"><br>
+		    Background: <input id="background_val" value="#000000" type="text"><br>
+		    Text: <input id="text_colour" value="#cccccc" type="text"><br>
+		    Horiz. margin: <input id="padding_x" value="50" type="number"><br>
+		    Vert. margin: <input id="padding_y" value="50" type="number"><br>
+		    Add text: <inputu type="text" id="chart_text"><br>
+		    Artist/album names: <input id="with_text" checked="checked" type="checkbox"> <a href="javascript:set_options(0)">Go</a>
+		  </inputu></div>
+		</div>
+
+		<a target="_blank" href="http://git.iwakura.moe:8000/help">Help</a>
+			    
+		<div id="chart_section_export_area" class="hidden">
+		    <a href="javascript:show_export_form()">Export</a>
+		    <div id="export_form" class="hidden">
+			<textarea id="export_form_ta"></textarea>
+		    </div>
+		</div>
+	    
+		<div id="chart_section_import_area">
+		    <a href="javascript:toggle_import_form()">Import</a>
+		    <div id="import_form" class="hidden">
+			<textarea id="import_form_ta"></textarea> <a href="javascript:import_from_textarea()">Go</a>
+		    </div>
+		</div>
+
+		<!--<div id="chart_section_delete_area" class="hidden">
+		    <a href="javascript:delete_chart()">Delete</a>
+		</div>-->
+	    </div>
+
+	    <div id="tile_section" class="hidden">
+		<!-- tile information form (default=hide, select=show, deselect=hide, select blank=hide)
+		   -->
+		<em id="edit_tile_artist-album"></em>
+		<!--Tile <input type="text" id="edit_tile_move_id" size="2">
+		or row,column: <input type="text" id="edit_tile_move_rc" size="2"><br>
+		<input type="text" id="edit_tile_artist" placeholder="Artist"><br>
+		<input type="text" id="edit_title_album" placeholder="Album"><br>
+		<input type="text" id="edit_tile_inf" placeholder="Year/romanization/etc.">-->
+		<!--<a href="javascript:edit_tile_save()">Save</a> or --><a href="javascript:edit_tile_delete()">Delete</a>
+	    </div>
+
+	    <div id="search_section" class="hidden">
+	      <a href="javascript:toggle_search_form()">Search</a>
+	      <div id="search_form" class="hidden">
+		<!-- search box (default=show)
+		     search results (default=show)
+		  -->
+		Search albums: <input id="asearch" type="text"><br>
+		Search local database (fast)?: <input id="asearch_db" type="checkbox"><br>
+		Search Discogs?: <input id="asearch_discogs" type="checkbox"><br>
+		Search Last.fm?: <input id="asearch_lfm" type="checkbox"> <a href="javascript:search_albums()">Search</a><br>
+		<a href="javascript:toggle_up_form()">Album not listed here?</a><p></p>
+</div>
+</div>
+
+	    <div id="upload_section">
+		<!--
+		     upload form and information (default=hide, unlisted button=show)
+		   -->
+	    </div>
+	    
+	    
+	    <div id="up_form" class="hidden">
+		Please read the <a href="http://git.iwakura.moe:8000/help">help page</a> for advice and rules on uploading album covers.<br>
+	    
+	    Artist: <input name="artist" id="up_form_artist" type="text"><br>
+		    Album: <input name="album" id="up_form_album" type="text"><br>
+		    Info: <input name="info" id="up_form_info" type="text"><br>
+		    Cover: <input name="cover" id="up_form_cover" type="file"> <a href="javascript:album_up_form()">Add</a>
+	    </div>
+	    <div id="album_results">
+	    </div>
+	</div>
+	<div id="main-copy">
+	    <div id="error_bar">Error: 404</div>
+	    <div id="axb_tpl">
+	    </div>
+	    <div id="top42_tpl">
+	      <div class="t175">
+		    <div></div>
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t175">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<!-- medium -->
+		<div class="t144">
+		    		    <div></div><div></div><div></div><div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t144">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+
+		<div class="t83">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t83">
+		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+		<div class="t83">
+		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+	    </div>
+	    <div id="topsters2_tpl">
+		<!-- big -->
+		<div class="t175">
+		    <div></div>
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t175">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<!-- medium -->
+		<div class="t144">
+		    		    <div></div><div></div><div></div><div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t144">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t144">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<!-- small -->
+		<div class="t83">
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+
+		</div>
+		<div class="t83">
+		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+		<div class="t83">
+		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+		<!-- tiny -->
+		<div class="t57">
+		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+		<div class="t57">
+		    		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+		<div class="t57">
+		    		    		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		    		    <div></div>
+		    <div></div>
+		    <div></div>
+		    <div></div>
+		</div>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	  	  {% autoescape false %}
+	  {% if wc %}
+		  do_import({{ r }});
+		  set_error("Imported chart.");
+	  {% else %}
+	  set_error("{{ error }}");
+	  {% endif %}
+		  {% endautoescape %}
+		  </script>
+    
+
+
+</body></html>
